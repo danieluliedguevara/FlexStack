@@ -59,7 +59,7 @@ External dependencies-->
 ## Developers
 
 - Jordi Marias-i-Parella (jordi.marias@i2cat.net)
-- Daniel Ulied Guevara (daniel.uied@i2cat.net)
+- Daniel Ulied Guevara (daniel.ulied@i2cat.net)
 - Adrià Pons Serra (adria.pons@i2cat.net)
 - Marc Codina Bartomeus (marc.codina@i2cat.net)
 
