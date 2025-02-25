@@ -71,7 +71,7 @@ class PythonECDSABackend(ECDSABackend):
     def create_key(self) -> int:
         """
         Creates a new key pair. Returns the identifier of the key.
-        
+
         Returns
         -------
         int
@@ -86,12 +86,12 @@ class PythonECDSABackend(ECDSABackend):
         """
         Returns the public key of the key pair with the identifier.
         It returns as a dict to be oer encoded as PublicVerificationKey in oer.
-        
+
         Parameters
         ----------
         identifier : int
             Identifier of the key.
-        
+
         Returns
         -------
         dict
@@ -116,14 +116,14 @@ class PythonECDSABackend(ECDSABackend):
     def sign(self, data: bytes, identifier: int) -> dict:
         """
         Signs the array of bytes. With the Key that corresponds to the identifier of the private key.
-        
+
         Parameters
         ----------
         data : bytes
             Data to sign.
         identifier : int
             Identifier of the private key.
-        
+
         Returns
         -------
         dict
@@ -139,14 +139,14 @@ class PythonECDSABackend(ECDSABackend):
     def verify(self, data: bytes, signature: dict, key: int) -> bool:
         """
         Verifies the array of bytes. With the Key that corresponds to the identifier.
-        
+
         Parameters
         ----------
         data : bytes
             Data to verify.
         signature : dict
             Signature to verify. In IEEE 1609.2 format (Signature).
-        
+
         Returns
         -------
         bool

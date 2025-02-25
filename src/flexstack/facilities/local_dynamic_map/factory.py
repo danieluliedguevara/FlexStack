@@ -24,7 +24,7 @@ def ldm_factory(
 ) -> LDMFacility:
     """
     Factory function to create a Local Dynamic Map Facility.
-    
+
     Parameters
     ----------
     ldm_location : Location
@@ -87,6 +87,8 @@ def ldm_factory(
     ldm_facility = LDMFacility(ldm_maintenance, ldm_service)
     logs.info(
         'LDM Facility configured with: LDM Maintenance: "%s", LDM Service: "%s", LDM Database: "%s".',
-        ldm_maintenance_type, ldm_service_type, ldm_database_type
+        ldm_maintenance_type,
+        ldm_service_type,
+        ldm_database_type,
     )
     return ldm_facility

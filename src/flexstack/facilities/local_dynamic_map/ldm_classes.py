@@ -692,7 +692,7 @@ class RelevanceDistance:
             return distance_mapping[self.relevance_distance]
 
         raise ValueError(
-            f"""RelevanceDistance relevance distance, {self.relevance_distance}, 
+            f"""RelevanceDistance relevance distance, {self.relevance_distance},
             not valid according to ETSI EN 302 895 V1.1.1 (2014-09). Must be in the range 0..7."""
         )
 
