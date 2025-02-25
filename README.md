@@ -72,6 +72,7 @@ This code has been developed within the following research and innovation projec
 - **PLEDGER** (Grant Agreement No. 871536) – A Horizon 2020 project aimed at edge computing solutions to improve performance and security.
 - **CODECO** (Grant Agreement No. 101092696) – A Horizon Europe initiative addressing cooperative and connected mobility.
 - **SAVE-V2X** (Grant Agreement No. ACE05322000044) – Focused on V2X communication for vulnerable road user safety, and funded by ACCIO.
+- **PoDIUM** (Grant Agreement No. 101069547) – Funded under the Horizon 2021 programme, this project focuses on accelerating the implementation of connected, cooperative and automated mobility technology.
 
 # Copyright
 This code has been developed by Fundació Privada Internet i Innovació Digital a Catalunya (i2CAT). 
