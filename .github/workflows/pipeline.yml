@@ -53,7 +53,7 @@ jobs:
           coverage html
           coverage report -m --fail-under=93
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-reports-${{ matrix.python-version }}
           path: |
@@ -108,7 +108,7 @@ jobs:
       - name: Build Wheel
         run: python -m build
       - name: Upload Wheel
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-wheels
           path: dist/*.whl
