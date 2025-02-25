@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "v2xflexstack"
-version = "0.9.3"
+version = "0.9.5"
 authors = [
   { name = "Jordi Marias-i-Parella", email = "jordi.marias@i2cat.net" },
   { name = "Daniel Ulied Guevara", email = "daniel.ulied@i2cat.net" },
@@ -36,6 +36,8 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 requires-python = ">=3.8"

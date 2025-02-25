@@ -19,11 +19,11 @@ class CertificateLibrary:
         with those certificates) [Key: Hashedid8, Value: Certificate]
     known_authorization_authorities : Dict[bytes, Certificate]
         The list of known authorization authorities. (Authorization Tickets
-        Certificates can be verified with those certificates) 
+        Certificates can be verified with those certificates)
         [Key: Hashedid8, Value: Certificate]
     known_root_certificates : Dict[bytes, Certificate]
         The list of known root certificates. (Authorization Authorities
-        Certificates can be verified with those certificates) 
+        Certificates can be verified with those certificates)
         [Key: Hashedid8, Value: Certificate]
     """
 
@@ -62,12 +62,12 @@ class CertificateLibrary:
     def get_issuer_certificate(self, certificate: Certificate) -> Certificate:
         """
         Get the issuer certificate of a certificate.
-        
+
         Parameters
         ----------
         certificate : Certificate
             The certificate to get the issuer certificate from.
-        
+
         Returns
         -------
         Certificate
@@ -97,7 +97,7 @@ class CertificateLibrary:
     def add_authorization_ticket(self, certificate: Certificate) -> None:
         """
         Add an authorization ticket to the library.
-        
+
         Parameters
         ----------
         certificate : Certificate
@@ -114,7 +114,7 @@ class CertificateLibrary:
     def add_authorization_authority(self, certificate: Certificate) -> None:
         """
         Add an authorization authority to the library.
-        
+
         Parameters
         ----------
         certificate : Certificate
@@ -134,7 +134,7 @@ class CertificateLibrary:
     def add_root_certificate(self, certificate: Certificate) -> None:
         """
         Add a root certificate to the library.
-        
+
         Parameters
         ----------
         certificate : Certificate
@@ -146,7 +146,7 @@ class CertificateLibrary:
     def add_own_certificate(self, certificate: OwnCertificate) -> None:
         """
         Add a certificate to the library.
-        
+
         Parameters
         ----------
         certificate : OwnCertificate
@@ -159,7 +159,7 @@ class CertificateLibrary:
     def get_authorization_ticket_by_hashedid8(self, hashedid8: bytes) -> Certificate:
         """
         Get an authorization ticket by its hashedid8.
-        
+
         Parameters
         ----------
         hashedid8 : bytes

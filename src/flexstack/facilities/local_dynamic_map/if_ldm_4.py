@@ -31,7 +31,6 @@ from .ldm_classes import (
 from .ldm_service import LDMService
 
 
-
 class InterfaceLDM4:
     """
     Class specified is described in ETSI EN 302 895 V1.1.1 (2014-09). Section 5.4.4.
@@ -62,7 +61,10 @@ class InterfaceLDM4:
         its_application_identifier : int
             ITS-AID of the application that wants to register as a data provider
         """
-        return isinstance(its_application_identifier, int) and its_application_identifier in VALID_ITS_AID
+        return (
+            isinstance(its_application_identifier, int)
+            and its_application_identifier in VALID_ITS_AID
+        )
 
     def check_permissions(self, permissions_granted: list, data_object_id: int) -> bool:
         """
@@ -87,7 +89,9 @@ class InterfaceLDM4:
                     return True
         return False
 
-    def register_data_consumer(self, data_consumer: RegisterDataConsumerReq) -> RegisterDataConsumerResp:
+    def register_data_consumer(
+        self, data_consumer: RegisterDataConsumerReq
+    ) -> RegisterDataConsumerResp:
         """
         Method specified in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.1.1
         TODO: Apply Security. Currenly gives access to anyone sending valid information.
@@ -101,31 +105,50 @@ class InterfaceLDM4:
         if (
             data_consumer is None
             or self.check_its_aid(data_consumer.application_id) is False
-            or self.check_permissions(data_consumer.access_permisions, data_consumer.application_id) is False
+            or self.check_permissions(
+                data_consumer.access_permisions, data_consumer.application_id
+            )
+            is False
         ):
-            return RegisterDataConsumerResp(data_consumer.application_id, None, RegisterDataConsumerResult(2))
+            return RegisterDataConsumerResp(
+                data_consumer.application_id, None, RegisterDataConsumerResult(2)
+            )
         self.ldm_service.add_data_consumer_its_aid(data_consumer.application_id)
-        self.logging.debug("Registered new LDM Data Consumer with application_id %d", data_consumer.application_id)
+        self.logging.debug(
+            "Registered new LDM Data Consumer with application_id %d",
+            data_consumer.application_id,
+        )
         return RegisterDataConsumerResp(
             data_consumer.application_id,
             data_consumer.access_permisions,
             RegisterDataConsumerResult(0),
         )
 
-    def deregister_data_consumer(self, data_consumer: DeregisterDataConsumerReq) -> DeregisterDataConsumerResp:
+    def deregister_data_consumer(
+        self, data_consumer: DeregisterDataConsumerReq
+    ) -> DeregisterDataConsumerResp:
         """
         Method specified in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.2.1
         Returning ACK 0 if the application is registered (and now will be unregistered) and
         ACK 1 if it is not (and will not be unregistered).
         """
-        self.logging.debug("Deregistring LDM Data Consumer wtih application_id: %d", data_consumer.application_id)
+        self.logging.debug(
+            "Deregistring LDM Data Consumer wtih application_id: %d",
+            data_consumer.application_id,
+        )
 
         if data_consumer.application_id in self.ldm_service.get_data_consumer_its_aid():
             self.ldm_service.del_data_consumer_its_aid(data_consumer.application_id)
-            return DeregisterDataConsumerResp(data_consumer.application_id, DeregisterDataConsumerAck(0))
-        return DeregisterDataConsumerResp(data_consumer.application_id, DeregisterDataConsumerAck(1))
+            return DeregisterDataConsumerResp(
+                data_consumer.application_id, DeregisterDataConsumerAck(0)
+            )
+        return DeregisterDataConsumerResp(
+            data_consumer.application_id, DeregisterDataConsumerAck(1)
+        )
 
-    def request_data_objects(self, data_request: RequestDataObjectsReq) -> RequestDataObjectsResp:
+    def request_data_objects(
+        self, data_request: RequestDataObjectsReq
+    ) -> RequestDataObjectsResp:
         """
         Method specified in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.3
         TODO: Add error message in response if result is not successful.
@@ -140,15 +163,24 @@ class InterfaceLDM4:
             data_request.application_id,
             data_request.data_object_type,
         )
-        if data_request.application_id not in self.ldm_service.get_data_consumer_its_aid():
-            return RequestDataObjectsResp(data_request.application_id, None, RequestedDataObjectsResult(1))
+        if (
+            data_request.application_id
+            not in self.ldm_service.get_data_consumer_its_aid()
+        ):
+            return RequestDataObjectsResp(
+                data_request.application_id, None, RequestedDataObjectsResult(1)
+            )
         for data_object_type in data_request.data_object_type:
             if data_object_type not in DATA_OBJECT_TYPE_ID:
-                return RequestDataObjectsResp(data_request.application_id, None, RequestedDataObjectsResult(2))
+                return RequestDataObjectsResp(
+                    data_request.application_id, None, RequestedDataObjectsResult(2)
+                )
 
         if data_request.priority is not None:
             if data_request.priority < 0 or data_request.priority > 255:
-                return RequestDataObjectsResp(data_request.application_id, None, RequestedDataObjectsResult(3))
+                return RequestDataObjectsResp(
+                    data_request.application_id, None, RequestedDataObjectsResult(3)
+                )
         if data_request.order is not None:
             if not isinstance(data_request.order, list):
                 return RequestDataObjectsResp(
@@ -158,14 +190,20 @@ class InterfaceLDM4:
                 )
         if data_request.filter is not None:
             if not isinstance(data_request.filter, Filter):
-                return RequestDataObjectsResp(data_request.application_id, None, RequestedDataObjectsResult(4))
-        data_objects: list = self.ldm_service.query(data_request)  # Find data objects in LDM Maintance DataBases
+                return RequestDataObjectsResp(
+                    data_request.application_id, None, RequestedDataObjectsResult(4)
+                )
+        data_objects: list = self.ldm_service.query(
+            data_request
+        )  # Find data objects in LDM Maintance DataBases
         self.logging.debug(
             "LDM Data Consumer with application id %s, has recieved %s.",
             data_request.application_id,
-            len(data_objects)
+            len(data_objects),
         )
-        return RequestDataObjectsResp(data_request.application_id, data_objects, RequestedDataObjectsResult(0))
+        return RequestDataObjectsResp(
+            data_request.application_id, data_objects, RequestedDataObjectsResult(0)
+        )
 
     def subscribe_data_consumer(
         self,
@@ -201,13 +239,18 @@ class InterfaceLDM4:
         callback : Callable[[None], None]
             Callback function that will be called when data is available for the data consumer.
         """
-        self.logging.debug("LDM Data Consumer subscribed with application id %s", str(subscribe_data_consumer))
+        self.logging.debug(
+            "LDM Data Consumer subscribed with application id %s",
+            str(subscribe_data_consumer),
+        )
         result = self.validate_subscribe_data_consumer(subscribe_data_consumer)
 
         if result is not None:
             return result
 
-        subscription_id = self.store_subscription_info(subscribe_data_consumer, callback)
+        subscription_id = self.store_subscription_info(
+            subscribe_data_consumer, callback
+        )
 
         return SubscribeDataObjectsResp(
             subscribe_data_consumer.application_id,
@@ -265,11 +308,15 @@ class InterfaceLDM4:
             error_message = "Invalid multiplicity"
 
         if result_code is not None:
-            return self.invalid_response(subscribe_data_consumer.application_id, result_code, error_message)
+            return self.invalid_response(
+                subscribe_data_consumer.application_id, result_code, error_message
+            )
 
         return None
 
-    def invalid_response(self, application_id: int, result_code: int, error_message: str) -> SubscribeDataObjectsResp:
+    def invalid_response(
+        self, application_id: int, result_code: int, error_message: str
+    ) -> SubscribeDataObjectsResp:
         """
         Method to create SubscribeDataObjectResp with error message as specified
         in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.4
@@ -326,7 +373,10 @@ class InterfaceLDM4:
         bool
             True if data_object_types are valid, False otherwise.
         """
-        return all(data_object_type in DATA_OBJECT_TYPE_ID for data_object_type in data_object_type)
+        return all(
+            data_object_type in DATA_OBJECT_TYPE_ID
+            for data_object_type in data_object_type
+        )
 
     def is_valid_priority(self, priority: int) -> bool:
         """
@@ -358,7 +408,9 @@ class InterfaceLDM4:
         bool
             True if order is valid, False otherwise.
         """
-        return order is None or (isinstance(order, list) and all(o in [1, 2] for o in order))
+        return order is None or (
+            isinstance(order, list) and all(o in [1, 2] for o in order)
+        )
 
     def is_valid_filter(self, data_filter: Filter) -> bool:
         """
@@ -409,7 +461,9 @@ class InterfaceLDM4:
         """
         return multiplicity is None or (0 <= multiplicity <= 255)
 
-    def store_subscription_info(self, subscribe_data_consumer: SubscribeDataobjectsReq, callback: Callable) -> int:
+    def store_subscription_info(
+        self, subscribe_data_consumer: SubscribeDataobjectsReq, callback: Callable
+    ) -> int:
         """
         Method to store subscription information as specified in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.4
 
@@ -436,7 +490,9 @@ class InterfaceLDM4:
             callback,
         )
 
-    def unsubscribe_data_consumer(self, unsubscribe_data_consumer: UnsubscribeDataConsumerReq):
+    def unsubscribe_data_consumer(
+        self, unsubscribe_data_consumer: UnsubscribeDataConsumerReq
+    ):
         """
         Method specified in ETSI EN 302 895 V1.1.1 (2014-09). Section 6.3.5.1
         Current standard doesn't have ASN.1 implementation for UnsubscribeDataConsumerReq
@@ -452,7 +508,10 @@ class InterfaceLDM4:
             "LDM Data Consumer Subscriber with application_id %s has unsubscribed.",
             unsubscribe_data_consumer.application_id,
         )
-        if unsubscribe_data_consumer.application_id not in self.ldm_service.get_data_consumer_its_aid():
+        if (
+            unsubscribe_data_consumer.application_id
+            not in self.ldm_service.get_data_consumer_its_aid()
+        ):
             return UnsubscribeDataConsumerResp(
                 unsubscribe_data_consumer.application_id,
                 None,
@@ -466,7 +525,9 @@ class InterfaceLDM4:
                 UnsubscribeDataConsumerAck(1),
             )
 
-        if not self.ldm_service.delete_subscription(unsubscribe_data_consumer.subscription_id):
+        if not self.ldm_service.delete_subscription(
+            unsubscribe_data_consumer.subscription_id
+        ):
             return UnsubscribeDataConsumerResp(
                 unsubscribe_data_consumer.application_id,
                 unsubscribe_data_consumer.subscription_id,

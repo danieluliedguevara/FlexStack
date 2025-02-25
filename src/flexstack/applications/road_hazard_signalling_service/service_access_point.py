@@ -4,7 +4,10 @@ from typing import TYPE_CHECKING
 from ...facilities.local_dynamic_map.ldm_classes import ReferencePosition, TimestampIts
 
 if TYPE_CHECKING:
-    from .emergency_vehicle_approaching_service import EmergencyVehicleApproachingService
+    from .emergency_vehicle_approaching_service import (
+        EmergencyVehicleApproachingService,
+    )
+
 
 class RelevanceArea:
     """
