@@ -1,4 +1,4 @@
-# Docker File Deployment
+# Docker Deployment
 
 The easist way to deploy the Flexstack is through a Dockerfile.
 
