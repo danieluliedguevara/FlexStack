@@ -107,7 +107,7 @@ location_service.location_service_thread.join()
 Once the Dockerfile and app.py files are created, inside the same directory;
 
 ```
-project-root/
+project/
 ├── app.py
 ├── Dockerfile
 └── docker-compose.yml
