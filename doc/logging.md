@@ -13,7 +13,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO) #logging.DEBUG for Debug-level logs.
 ```
-This will show logs for all the 
+This will show logs for all the components, in a specific level.
 
 ### File Configuration Logging
 

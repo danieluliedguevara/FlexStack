@@ -104,7 +104,15 @@ location_service.add_callback(vru_awareness_service.vam_transmission_management.
 location_service.location_service_thread.join()
 ```
 
-Once the Dockerfile and app.py files are created, inside the same directory, run the following commands; 
+Once the Dockerfile and app.py files are created, inside the same directory;
+
+/project
+│── app.py
+│── Dockerfile
+│── docker-compose.yml
+
+
+Run the following commands; 
 
 ```bash
 docker build -t flexstack .
