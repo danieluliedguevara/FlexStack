@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/flexstack:latest
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/flexstack
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
