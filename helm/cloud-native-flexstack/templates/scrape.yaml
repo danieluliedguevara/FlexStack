@@ -11,4 +11,4 @@ spec:
     - labels:
         app: flexstack
       targets:
-        - {{ .Values.flexstack_deployment.prometheus_service.nodePort }}
+        - {{ .Values.flexstack_deployment.nodePortSvc }}
