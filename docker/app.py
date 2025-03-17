@@ -32,6 +32,12 @@ parser.add_argument(
     default="aa:bb:cc:11:22:33",
     help='The MAC address to send CAMs to (e.g. "aa:bb:cc:dd:ee:ff")',
 )
+parser.add_argument(
+    "--interface",
+    type=str,
+    default="lo",
+    help='The interface to use for sending CAMs (e.g. "lo")',
+)
 args = parser.parse_args()
 
 
@@ -48,7 +54,7 @@ mib.itsGnLocalGnAddr = gn_addr
 gn_router = Router(mib=mib, sign_service=None)
 
 # Link-Layer
-ll = RawLinkLayer(iface="eth0", mac_address=mac_address,
+ll = RawLinkLayer(iface=args.interface, mac_address=mac_address,
                   receive_callback=gn_router.gn_data_indicate)
 gn_router.link_layer = ll
 
