@@ -1,0 +1,5 @@
+
+Thank you for installing the Flexstack Helm chart!
+
+
+Happy Remote Operation!

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: flexstack
+  namespace: {{.Values.namespace}}
+spec:
+  serviceName: flexstack
+  replicas: {{.Values.replicas}}
+  selector:
+    matchLabels:
+      app: flexstack
+  template:
+    metadata:
+      labels:
+        app: flexstack
+      annotations:
+        k8s.v1.cni.cncf.io/networks: veth-conf
+    spec:
+      containers:
+        - name: flexstack
+          image: {{ .Values.flexstack_deployment.repository }}{{ .Values.flexstack_deployment.tag }}
+          imagePullPolicy: {{.Values.pullPolicy}}
+          env:
+            - name: POD_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              ID=$(echo $POD_INDEX | grep -o '[0-9]*');
+              MAC=$(printf '00:00:00:00:00:%02X' $ID);
+              exec python app.py --station-id $ID --mac-address $MAC --interface net1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexstack
+  namespace: v2x
+spec:
+  selector:
+    app: flexstack
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: {{ .Values.prometheus_service.prometheus_node_port }}
+  type: NodePort

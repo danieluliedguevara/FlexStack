@@ -1,0 +1,13 @@
+# Default values for remote-contro-niryo-ned-2.
+
+
+flexstack_deployment:
+  repository: " docker.io/danieluliedi2cat/flexstack"
+  tag: ":master"
+  pullPolicy: Always
+  replicas: 1
+  namespace: v2x
+  nodePortSvc: "flexstack.v2x.svc.cluster.local:32000"
+prometheus_service:
+  prometheus_node_port: "32000"
+
