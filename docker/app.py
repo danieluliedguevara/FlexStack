@@ -2,7 +2,7 @@ import argparse
 
 import logging
 
-from metrics.metrics_exposer import MetricsExposer
+from flexstack.metrics.metrics_exposer import MetricsExposer
 
 from flexstack.facilities.vru_awareness_service.vru_awareness_service import VRUAwarenessService
 from flexstack.facilities.vru_awareness_service.vam_transmission_management import DeviceDataProvider
