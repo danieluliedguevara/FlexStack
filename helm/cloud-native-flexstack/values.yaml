@@ -9,4 +9,5 @@ flexstack_deployment:
 prometheus_service:
   prometheus_node_http_port: "32000"
   prometheus_node_reloder_web_port: "32001"
-
+grafana_service:
+  grafana_node_http_port: "31000"

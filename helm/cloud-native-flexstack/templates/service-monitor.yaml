@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: flexstack-service-monitor
+  namespace: v2x
+  labels:
+    release: flexstack
+spec:
+  selector:
+    matchLabels:
+      app: flexstack
+      type: flexstack-prometheus-exporter
+  endpoints:
+  - port: metrics

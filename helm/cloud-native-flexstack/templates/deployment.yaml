@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: flexstack
   namespace: {{.Values.namespace}}
+  labels:
+    app: flexstack
 spec:
   serviceName: flexstack
   replicas: {{.Values.replicas}}
@@ -37,6 +39,8 @@ kind: Service
 metadata:
   name: flexstack
   namespace: v2x
+  labels:
+    app: flexstack
 spec:
   selector:
     app.kubernetes.io/instance: flexstack-kube-prometheus-prometheus
@@ -55,6 +59,25 @@ spec:
     protocol: TCP
     targetPort: reloader-web
   type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexstack-grafana-nodeport
+  namespace: v2x
+  labels:
+    app: flexstack
+spec:
+  selector:
+    app.kubernetes.io/instance: flexstack
+    app.kubernetes.io/name: grafana
+  ports:
+  - name: http-web
+    port: 3000
+    nodePort: {{ .Values.grafana_service.grafana_node_http_port }}
+    protocol: TCP
+    targetPort: 3000
+  type: NodePort
 
 ---
 apiVersion: v1
@@ -62,10 +85,15 @@ kind: Service
 metadata:
   name: flexstack-prometheus-exporter
   namespace: v2x
+  labels:
+    app: flexstack
+    type: flexstack-prometheus-exporter
 spec:
   selector:
     app: flexstack
   ports:
-  - port: 8000
+  - name: "metrics"
+    port: 8000
     protocol: TCP
     targetPort: 8000
+

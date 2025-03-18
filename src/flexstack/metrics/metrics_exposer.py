@@ -1,4 +1,5 @@
 from time import time
+import logging
 
 from ..facilities.local_dynamic_map.ldm_facility import LDMFacility
 from ..facilities.local_dynamic_map.ldm_classes import (
@@ -21,12 +22,16 @@ class MetricsExposer:
         """
         Initialization class for MetricsExposer
         """
+        self.logging = logging.getLogger("metrics")
+
         self.its_station_name = its_station_name
         self.ldm = ldm
         self.generation_delta_time = GenerationDeltaTime()
         self.prometheus = PrometheusClientPull()
         self.__register_to_ldm(ldm, location)
         self.__subscribe_to_ldm(ldm)
+
+        self.logging.info("MetricsExposer initialized!")
 
     def __register_to_ldm(self, ldm: LDMFacility, location: Location) -> None:
         """
@@ -50,6 +55,7 @@ class MetricsExposer:
         )
         if register_data_consumer_reponse.result == 2:
             raise Exception(f"Failed to register data consumer: {str(register_data_consumer_reponse)}")
+        self.logging.debug(f"Registered to LDM with response: {str(register_data_consumer_reponse)}")
 
     def __current_its_time(self) -> float:
         """
@@ -76,13 +82,19 @@ class MetricsExposer:
         -------
         None
         """
-        self.prometheus.send_latency(self.__current_its_time() - data_object["timestamp"])
+        latency = self.__current_its_time() - data_object["timestamp"]
+        self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["header"]["stationId"],
             data_object["cam"]["camParameters"]["basicContainer"]["stationType"],
             self.its_station_name,
             data_object["cam"]["camParameters"]["basicContainer"]["referencePosition"]["latitude"] / 10000000,
             data_object["cam"]["camParameters"]["basicContainer"]["referencePosition"]["longitude"] / 10000000,
+        )
+        self.logging.debug(
+            f"Sending CAM latency and LDM map data to Prometheus, with values latency: {latency}, LDM map, "
+            + f"lat: {data_object['cam']['camParameters']['basicContainer']['referencePosition']['latitude'] / 10000000}, "
+            + f"lon: {data_object['cam']['camParameters']['basicContainer']['referencePosition']['longitude'] / 10000000}"
         )
 
     def __handle_vam_data_object(self, data_object: dict) -> None:
@@ -98,7 +110,8 @@ class MetricsExposer:
         -------
         None
         """
-        self.prometheus.send_latency(self.__current_its_time() - data_object["timeStamp"])
+        latency = self.__current_its_time() - data_object["timestamp"]
+        self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["dataObject"]["header"]["stationId"],
             data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["stationType"],
@@ -107,6 +120,12 @@ class MetricsExposer:
             / 10000000,
             data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["longitude"]
             / 10000000,
+        )
+
+        self.logging.debug(
+            f"Sending VAM latency and LDM map data to Prometheus, with values latency: {latency}, LDM map, "
+            + f"lat: {data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["latitude"] / 10000000}, "
+            + f"lon: {data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["longitude"] / 10000000}"
         )
 
     def __handle_data_object(self, data_object: dict) -> None:
@@ -175,3 +194,5 @@ class MetricsExposer:
         )
         if subscribe_data_consumer_response.result.result != 0:
             raise Exception(f"Failed to subscribe to data objects: {str(subscribe_data_consumer_response.result)}")
+
+        self.logging.debug(f"Subscribed to LDM with response: {str(subscribe_data_consumer_response)}")
