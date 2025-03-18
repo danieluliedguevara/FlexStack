@@ -82,7 +82,7 @@ class MetricsExposer:
         -------
         None
         """
-        latency = self.__current_its_time() - data_object["timestamp"]
+        latency = self.__current_its_time() - data_object["timeStamp"]
         self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["header"]["stationId"],
@@ -110,7 +110,7 @@ class MetricsExposer:
         -------
         None
         """
-        latency = self.__current_its_time() - data_object["timestamp"]
+        latency = self.__current_its_time() - data_object["timeStamp"]
         self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["dataObject"]["header"]["stationId"],

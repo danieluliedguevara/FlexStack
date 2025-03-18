@@ -47,7 +47,7 @@ broker to send and receive messages from the V2X library.
 Library can be easily installed using the following command:
 
 ```
-pip install v2xflexstack
+pip install v2xflexstack-monitoring
 ```
 
 <!--# Technical description (very basic)
