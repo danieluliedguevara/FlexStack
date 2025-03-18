@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir v2xflexstack
+RUN pip install --no-cache-dir v2xflexstack-monitoring
 
 ENTRYPOINT ["python", "app.py"]
 CMD ["--station-id", "1"]
