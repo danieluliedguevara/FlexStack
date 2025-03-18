@@ -31,7 +31,7 @@ class MetricsExposer:
         self.__register_to_ldm(ldm, location)
         self.__subscribe_to_ldm(ldm)
 
-        self.logging.info("MetricsExposer initialized!")
+        self.logging.info("Metrics Exposer initialized!")
 
     def __register_to_ldm(self, ldm: LDMFacility, location: Location) -> None:
         """
@@ -124,8 +124,8 @@ class MetricsExposer:
 
         self.logging.debug(
             f"Sending VAM latency and LDM map data to Prometheus, with values latency: {latency}, LDM map, "
-            + f"lat: {data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["latitude"] / 10000000}, "
-            + f"lon: {data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["longitude"] / 10000000}"
+            + f"lat: {data_object['dataObject']['vam']['vamParameters']['basicContainer']['referencePosition']['latitude'] / 10000000}, "
+            + f"lon: {data_object['dataObject']['vam']['vamParameters']['basicContainer']['referencePosition']['longitude'] / 10000000}"
         )
 
     def __handle_data_object(self, data_object: dict) -> None:

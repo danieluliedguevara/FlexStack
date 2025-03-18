@@ -27,7 +27,7 @@ def parse_mac_address_to_int(mac_address: str):
 
 
 def main(args: argparse.Namespace) -> None:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     # Geonet
     mac_address = parse_mac_address_to_int(args.mac_address)
