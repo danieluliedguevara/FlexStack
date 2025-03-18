@@ -1,18 +1,17 @@
 from time import time
 
-from src.flexstack.facilities.local_dynamic_map.ldm_facility import LDMFacility
-from src.flexstack.facilities.local_dynamic_map.ldm_classes import (
+from ..facilities.local_dynamic_map.ldm_facility import LDMFacility
+from ..facilities.local_dynamic_map.ldm_classes import (
     SubscribeDataObjectsResp,
     SubscribeDataobjectsReq,
     RequestDataObjectsResp,
     RegisterDataConsumerReq,
-    RegisterDataConsumerResp
+    RegisterDataConsumerResp,
 )
-from src.flexstack.facilities.local_dynamic_map.ldm_constants import SPATEM, CAM, VAM, DENM
-from src.flexstack.utils.location_service import LocationService as Location
-from src.flexstack.facilities.ca_basic_service.cam_transmission_management import GenerationDeltaTime
+from ..facilities.local_dynamic_map.ldm_constants import SPATEM, CAM, VAM, DENM
+from ..facilities.ca_basic_service.cam_transmission_management import GenerationDeltaTime
 
-from src.flexstack.utils.static_location_service import ThreadStaticLocationService as Location
+from ..utils.static_location_service import ThreadStaticLocationService as Location
 
 from .prometheus_adaptation import PrometheusClientPull
 
@@ -104,8 +103,10 @@ class MetricsExposer:
             data_object["dataObject"]["header"]["stationId"],
             data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["stationType"],
             self.its_station_name,
-            data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["latitude"] / 10000000,
-            data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["longitude"] / 10000000,
+            data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["latitude"]
+            / 10000000,
+            data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["longitude"]
+            / 10000000,
         )
 
     def __handle_data_object(self, data_object: dict) -> None:

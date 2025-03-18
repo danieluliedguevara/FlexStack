@@ -39,10 +39,33 @@ metadata:
   namespace: v2x
 spec:
   selector:
+    app.kubernetes.io/instance: flexstack-kube-prometheus-prometheus
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/managed-by: prometheus-operator
+  ports:
+  - name: http-web
+    port: 9090
+    nodePort: {{ .Values.prometheus_service.prometheus_node_http_port }}
+    protocol: TCP
+    targetPort: 9090
+  - appProtocol: http
+    name: reloader-web
+    nodePort: {{ .Values.prometheus_service.prometheus_node_reloder_web_port }}
+    port: 8080
+    protocol: TCP
+    targetPort: reloader-web
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flexstack-prometheus-exporter
+  namespace: v2x
+spec:
+  selector:
     app: flexstack
   ports:
-    - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: {{ .Values.prometheus_service.prometheus_node_port }}
-  type: NodePort
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000

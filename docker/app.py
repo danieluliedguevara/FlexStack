@@ -20,11 +20,11 @@ from flexstack.geonet.gn_address import GNAddress, M, ST, MID
 from flexstack.linklayer.raw_link_layer import RawLinkLayer
 
 
-
 def parse_mac_address_to_int(mac_address: str):
     mac_address = mac_address.split(":")
     mac_address = [int(x, 16) for x in mac_address]
     return bytes(mac_address)
+
 
 def main(args: argparse.Namespace) -> None:
     logging.basicConfig(level=logging.INFO)
@@ -40,14 +40,12 @@ def main(args: argparse.Namespace) -> None:
     gn_router = Router(mib=mib, sign_service=None)
 
     # Link-Layer
-    ll = RawLinkLayer(iface=args.interface, mac_address=mac_address,
-                    receive_callback=gn_router.gn_data_indicate)
+    ll = RawLinkLayer(iface=args.interface, mac_address=mac_address, receive_callback=gn_router.gn_data_indicate)
     gn_router.link_layer = ll
 
     # BTP
     btp_router = BTPRouter(gn_router)
     gn_router.register_indication_callback(btp_router.btp_data_indication)
-
 
     # Facility - Location Service
     location_service = LocationService()
@@ -60,9 +58,8 @@ def main(args: argparse.Namespace) -> None:
     local_dynamic_map = ldm_factory(
         ldm_location, ldm_maintenance_type="Reactive", ldm_service_type="Reactive", ldm_database_type="Dictionary"
     )
-    
+
     MetricsExposer("Test-ITS-Station", local_dynamic_map, ldm_location)
-    
 
     # Facility - Device Data Provider
     device_data_provider = DeviceDataProvider()
@@ -70,13 +67,14 @@ def main(args: argparse.Namespace) -> None:
     device_data_provider.station_type = 2  # Cyclist
 
     # Facility - VRU Awareness Service
-    vru_awareness_service = VRUAwarenessService(btp_router=btp_router,
-                                                device_data_provider=device_data_provider, 
-                                                ldm=local_dynamic_map)
+    vru_awareness_service = VRUAwarenessService(
+        btp_router=btp_router, device_data_provider=device_data_provider, ldm=local_dynamic_map
+    )
 
     location_service.add_callback(vru_awareness_service.vam_transmission_management.location_service_callback)
 
     location_service.location_service_thread.join()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run a C-ITS station.")

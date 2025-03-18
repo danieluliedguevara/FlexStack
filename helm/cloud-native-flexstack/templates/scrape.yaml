@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:
   name: static-config
-  namespace: monitoring
+  namespace: {{.Values.namespace}}
   labels:
     release: prometheus
 spec:
@@ -11,4 +11,4 @@ spec:
     - labels:
         app: flexstack
       targets:
-        - {{ .Values.flexstack_deployment.nodePortSvc }}
+        - {{ .Values.flexstack_deployment.flexstack_prometheus_ip_and_port }}

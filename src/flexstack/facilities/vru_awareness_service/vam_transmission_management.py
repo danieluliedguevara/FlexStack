@@ -4,7 +4,7 @@ import logging
 
 from dateutil import parser
 
-from ...facilities.local_dynamic_map.ldm_classes import Utils
+from ..local_dynamic_map.ldm_classes import Utils
 
 from .vam_ldm_adaptation import VRUBasicServiceLDM
 
