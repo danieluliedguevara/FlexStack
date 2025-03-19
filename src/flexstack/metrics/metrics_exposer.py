@@ -26,7 +26,6 @@ class MetricsExposer:
 
         self.its_station_name = its_station_name
         self.ldm = ldm
-        self.generation_delta_time = GenerationDeltaTime()
         self.prometheus = PrometheusClientPull()
         self.__register_to_ldm(ldm, location)
         self.__subscribe_to_ldm(ldm)
@@ -57,18 +56,6 @@ class MetricsExposer:
             raise Exception(f"Failed to register data consumer: {str(register_data_consumer_reponse)}")
         self.logging.debug(f"Registered to LDM with response: {str(register_data_consumer_reponse)}")
 
-    def __current_its_time(self) -> float:
-        """
-        Get the current ITS time.
-
-        Returns
-        -------
-        float
-            Current ITS time.
-        """
-        self.generation_delta_time.set_in_normal_timestamp(time() * 1000)
-        return self.generation_delta_time.msec
-
     def __handle_cam_data_object(self, data_object: dict) -> None:
         """
         Handle the CAM data object received from the Local Data Manager (LDM).
@@ -82,7 +69,7 @@ class MetricsExposer:
         -------
         None
         """
-        latency = self.__current_its_time() - data_object["timeStamp"]
+        latency = time() - data_object["timeStamp"]
         self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["header"]["stationId"],
@@ -110,7 +97,7 @@ class MetricsExposer:
         -------
         None
         """
-        latency = self.__current_its_time() - data_object["timeStamp"]
+        latency = time() - data_object["timeStamp"]
         self.prometheus.send_latency(latency)
         self.prometheus.send_ldm_map(
             data_object["dataObject"]["header"]["stationId"],
