@@ -1,6 +1,6 @@
 # FlexStack(R) Community Edition
 
-<!--<img src="https://github.com/danieluliedguevara/FlexStack/blob/master/doc/img/i2cat_logo.png" alt="V2X Flex Stack" width="200"/>--> <img src="doc/img/i2cat_logo.png" alt="i2CAT Logo" width="200"/>
+<!--<img src="https://raw.githubusercontent.com/danieluliedguevara/FlexStack/refs/heads/master/doc/img/i2cat_logo.png" alt="V2X Flex Stack" width="200"/>--> <img src="doc/img/i2cat_logo.png" alt="i2CAT Logo" width="200"/>
 
 
 # Short description
