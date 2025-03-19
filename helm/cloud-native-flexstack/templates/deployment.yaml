@@ -33,11 +33,12 @@ spec:
               ID=$(echo $POD_INDEX | grep -o '[0-9]*');
               MAC=$(printf '00:00:00:00:00:%02X' $ID);
               exec python app.py --station-id $ID --mac-address $MAC --interface net1
+      restartPolicy: {{.Values.restartPolicy}}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flexstack
+  name: flexstack-prometheus-nodeport
   namespace: v2x
   labels:
     app: flexstack

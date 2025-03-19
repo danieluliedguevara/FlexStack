@@ -18,6 +18,7 @@ class PrometheusClientPull:
             "ldm_map",
             "Vehicle Geolocation Data",
             ["station_id", "station_type", "detected_by", "latitude", "longitude"],
+            registry=self.registry
         )
 
         start_http_server(PROMETHEUS_PORT, registry=self.registry)

@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: flexstack-service-monitor
-  namespace: v2x
+  namespace: {{.Values.namespace}}
   labels:
     release: flexstack
 spec:

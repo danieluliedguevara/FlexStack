@@ -1,13 +1,24 @@
 # Default values for flexstack.
 flexstack_deployment:
   repository: " docker.io/danieluliedi2cat/flexstack"
-  tag: ":latest"
-  pullPolicy: Always
+  tag: ":local"
+  pullPolicy: Never
   replicas: 1
   namespace: v2x
+  restartPolicy: Never
   flexstack_prometheus_ip_and_port: "flexstack-prometheus-exporter.v2x.svc.cluster.local:8000"
 prometheus_service:
   prometheus_node_http_port: "32000"
   prometheus_node_reloder_web_port: "32001"
 grafana_service:
   grafana_node_http_port: "31000"
+kube-prometheus-stack:
+  grafana:
+    enabled: true
+    defaultDashboardsEnabled: false
+    sidecar:
+      dashboards:
+        enabled: true
+        label: "grafana_dashboard"
+        folder: "/var/lib/grafana/dashboards"
+        searchNamespace: v2x
