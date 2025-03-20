@@ -96,7 +96,7 @@ Attributions of Third Party Components of this work:
 - `python-dateutil` Version 2.8.2 - Imported python library - https://pypi.org/project/python-dateutil/ - dual license - either Apache 2.0 License or the BSD 3-Clause License.
 - `tinydb` Version 4.7.1- Imported python library - https://tinydb.readthedocs.io/en/latest/ - MIT license
 - `ecdsa` Version 0.18.0 - Imported python library - https://pypi.org/project/ecdsa/ - MIT license
-
+- `prometheus-client` Version 0.21.1 - Imported python library - https://pypi.org/project/prometheus-client/ - Apache Software License 2.0
 # External links
 
 https://www.flexstack.eu
