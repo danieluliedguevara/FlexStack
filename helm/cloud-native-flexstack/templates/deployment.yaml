@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: flexstack
-  namespace: {{.Values.namespace}}
+  namespace: {{.Values.flexstack_deployment.namespace}}
   labels:
     app: flexstack
 spec:
   serviceName: flexstack
-  replicas: {{.Values.replicas}}
+  replicas: {{.Values.flexstack_deployment.replicas}}
   selector:
     matchLabels:
       app: flexstack

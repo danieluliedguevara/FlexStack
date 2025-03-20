@@ -1,3 +1,6 @@
+from __future__ import annotations
+from collections.abc import Callable
+
 import logging
 
 from ..local_dynamic_map.ldm_constants import VAM
@@ -67,3 +70,14 @@ class VRUAwarenessService:
         )
 
         self.logging.info("VRU Basic Service Started!")
+
+    def add_metrics_callback(self, metrics_callback: Callable[[int], None]) -> None:
+        """
+        Add a callback to the VRU Awareness Service.
+
+        Parameters
+        ----------
+        metrics_callback : Callable
+            Callback function that will be called when a metric is updated.
+        """
+        self.vam_reception_management.add_metrics_callback(metrics_callback)

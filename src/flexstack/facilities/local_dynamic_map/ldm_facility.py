@@ -1,4 +1,6 @@
 from __future__ import annotations
+from collections.abc import Callable
+
 import logging
 
 from .ldm_maintenance import LDMMaintenance
@@ -39,3 +41,13 @@ class LDMFacility:
         # self.if_ldm_2 = InterfaceLDM2(self.ldm_service)
         self.if_ldm_3 = InterfaceLDM3(self.ldm_service)
         self.if_ldm_4 = InterfaceLDM4(self.ldm_service)
+
+    def add_metrics_callback(self, metrics_callback: Callable[[int, int], None]) -> None:
+        """
+        Method created in order to add a metrics callback.
+
+        Parameters
+        ----------
+        metrics_callback : Callable[]
+        """
+        self.ldm_maintenance.add_metrics_callback(metrics_callback)

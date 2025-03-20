@@ -1,4 +1,7 @@
 from __future__ import annotations
+from collections.abc import Callable
+
+import sys
 import time
 import json
 import logging
@@ -30,7 +33,8 @@ class LDMMaintenance:
         self.data_containers = data_base
         self.area_of_maintenance = area_of_maintenance
         self.new_data_recieved_flag = NO_NEW_DATA_RECIEVED
-
+        self.metrics_callback = None
+    
     def run(self) -> None:
         """
         Method specified in the ETSI 302 895 V1.1.1 (2014-09). Section 5.3.2.
@@ -236,10 +240,31 @@ class LDMMaintenance:
         # Check data is within the LDM Area of Maintenance
         self.check_and_delete_area_of_maintenance()
 
+        if self.metrics_callback:
+            self.__attend_metrics_callback()
+
         self.logging.debug(
             "Deleted %s/%s data containers in trash collection",
             initial_data_containers - len(self.get_all_data_containers()),
-            initial_data_containers
+            initial_data_containers,
+        )
+
+    def __attend_metrics_callback(self) -> None:
+        """
+        Function to attend the metrics callback.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        ldm_size = sys.getsizeof(self.get_all_data_containers())
+        self.metrics_callback(
+            ldm_size,
+            0,
         )
 
     def update_area_of_maintenance(self, area_of_maintenance) -> None:
@@ -266,3 +291,13 @@ class LDMMaintenance:
             self.new_data_recieved_flag = NO_NEW_DATA_RECIEVED
             return NEW_DATA_RECIEVED
         return NO_NEW_DATA_RECIEVED
+
+    def add_metrics_callback(self, callback: Callable[[int, int], None]) -> None:
+        """
+        Method used to add a callback for metrics.
+
+        Parameters
+        ----------
+        callback : function
+        """
+        self.metrics_callback = callback

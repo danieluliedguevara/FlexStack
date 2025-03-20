@@ -27,7 +27,7 @@ def parse_mac_address_to_int(mac_address: str):
 
 
 def main(args: argparse.Namespace) -> None:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     # Geonet
     mac_address = parse_mac_address_to_int(args.mac_address)
@@ -59,8 +59,6 @@ def main(args: argparse.Namespace) -> None:
         ldm_location, ldm_maintenance_type="Reactive", ldm_service_type="Reactive", ldm_database_type="Dictionary"
     )
 
-    MetricsExposer("Test-ITS-Station", local_dynamic_map, ldm_location)
-
     # Facility - Device Data Provider
     device_data_provider = DeviceDataProvider()
     device_data_provider.station_id = args.station_id
@@ -72,6 +70,12 @@ def main(args: argparse.Namespace) -> None:
     )
 
     location_service.add_callback(vru_awareness_service.vam_transmission_management.location_service_callback)
+
+    # Metrics
+    metrics_exposer = MetricsExposer("Test-ITS-Station", local_dynamic_map, ldm_location)
+    vru_awareness_service.add_metrics_callback(metrics_exposer.facility_level_callback)
+    local_dynamic_map.add_metrics_callback(metrics_exposer.ldm_callback)
+    gn_router.add_metrics_callback(metrics_exposer.gn_level_callback)
 
     location_service.location_service_thread.join()
 

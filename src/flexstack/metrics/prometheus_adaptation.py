@@ -10,18 +10,55 @@ class PrometheusClientPull:
         self.registry = CollectorRegistry()
 
         self.latency = Histogram("latency", "Average latency of recieved V2X packets in ms", registry=self.registry)
-        self.v2x_bandwidth = Histogram(
-            "v2x_bandwidth", "Bandwidth used to send V2X packets in Kbps", registry=self.registry
+        self.v2x_uplink_bandwidth = Histogram(
+            "v2x_uplink_bandwidth", "Uplink bandwidth used to recieve V2X packets in Bps", registry=self.registry
+        )
+        self.v2x_downlink_bandwidth = Histogram(
+            "v2x_downlink_bandwidth", "Downlink bandwidth used to send V2X packets in Bps", registry=self.registry
         )
         self.ldm_size = Histogram("ldm_size", "Size of Local Dynamic Maps in Bytes", registry=self.registry)
         self.ldm_map = Gauge(
             "ldm_map",
             "Vehicle Geolocation Data",
             ["station_id", "station_type", "detected_by", "latitude", "longitude"],
-            registry=self.registry
+            registry=self.registry,
+        )
+        self.number_of_messages_sent = Gauge(
+            "number_of_messages_sent", "Number of messages sent", registry=self.registry
+        )
+        self.number_of_messages_recieved = Gauge(
+            "number_of_messages_recieved", "Number of messages recieved", registry=self.registry
         )
 
         start_http_server(PROMETHEUS_PORT, registry=self.registry)
+
+    def send_number_of_messages_sent(self) -> None:
+        """
+        Function to send the number of messages sent to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        self.number_of_messages_sent.inc()
+
+    def send_number_of_messages_recieved(self) -> None:
+        """
+        Function to send the number of messages recieved to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        self.number_of_messages_recieved.inc()
 
     def send_ldm_map(self, station_id: str, station_type: str, detected_by: str, latitude: str, longitude: str) -> None:
         """
@@ -67,9 +104,9 @@ class PrometheusClientPull:
         """
         self.latency.observe(value)
 
-    def send_v2x_bandwidth(self, value: float) -> None:
+    def send_v2x_uplink_bandwidth(self, value: float) -> None:
         """
-        Function to send the V2X bandwidth to the Prometheus Gateway.
+        Function to send the Uplink V2X bandwidth to the Prometheus Gateway.
 
         Parameters
         ----------
@@ -80,7 +117,22 @@ class PrometheusClientPull:
         -------
         None
         """
-        self.v2x_bandwidth.observe(value)
+        self.v2x_uplink_bandwidth.observe(value)
+    
+    def send_v2x_downlink_bandwidth(self, value: float) -> None:
+        """
+        Function to send the Downlink V2X bandwidth to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        value: float
+            The value to send to the Prometheus Gateway
+
+        Returns
+        -------
+        None
+        """
+        self.v2x_downlink_bandwidth.observe(value)
 
     def send_ldm_size(self, value: float) -> None:
         """

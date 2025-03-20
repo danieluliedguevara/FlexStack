@@ -10,7 +10,6 @@ from ..facilities.local_dynamic_map.ldm_classes import (
     RegisterDataConsumerResp,
 )
 from ..facilities.local_dynamic_map.ldm_constants import SPATEM, CAM, VAM, DENM
-from ..facilities.ca_basic_service.cam_transmission_management import GenerationDeltaTime
 
 from ..utils.static_location_service import ThreadStaticLocationService as Location
 
@@ -26,11 +25,108 @@ class MetricsExposer:
 
         self.its_station_name = its_station_name
         self.ldm = ldm
+        self.monitored_its_stations = []
         self.prometheus = PrometheusClientPull()
         self.__register_to_ldm(ldm, location)
         self.__subscribe_to_ldm(ldm)
 
         self.logging.info("Metrics Exposer initialized!")
+
+    def btp_level_callback(self, args) -> None:
+        """
+        Callback function for the BTP level. This function will be called when the BTP recieves or sends a message.
+        It will be used to send BTP-specific metrics to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        args : Any
+            Arguments passed to the callback function.
+
+        Returns
+        -------
+        None
+        """
+        pass
+
+    def gn_level_callback(self, recieved_bytes: int = 0, send_bytes: int = 0) -> None:
+        """
+        Callback function for the Geonet level. This function will be called when the Geonet recieves or
+        sends a message. It will be used to send Geonet-specific metrics to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        recievied_bytes : int
+            Number of bytes recieved by the Geonet.
+        send_bytes : int
+            Number of bytes sent by the Geonet.
+
+        Returns
+        -------
+        None
+        """
+        self.logging.debug(
+            f"Monitoring V2X Bandwidth metrics from the GN-level. Recieved Bytes: {recieved_bytes}, Send Bytes: {send_bytes}"
+        )
+
+        if recieved_bytes > 0:
+            self.prometheus.send_v2x_uplink_bandwidth(recieved_bytes)
+        if send_bytes > 0:
+            self.prometheus.send_v2x_downlink_bandwidth(send_bytes)
+
+    def ldm_callback(self, ldm_size: int, oldest_message: int = 0) -> None:
+        """
+        Callback function for the LDM. This function will be called when the LDM recieves or sends a message.
+        It will be used to send LDM-specific metrics to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        ldm_size : int
+            Size of the Local Dynamic Map in bytes.
+        oldest_message : int
+            Time of the oldest message in the LDM.
+
+        Returns
+        -------
+        None
+        """
+        self.logging.debug(f"Monitoring LDM size metrics from the LDM. Size: {ldm_size}")
+
+        self.prometheus.send_ldm_size(ldm_size)
+
+    def facility_level_callback(self, latency: int) -> None:
+        """
+        Callback function for the Facilities level. This function will be called when the Facilities recieves or
+        sends a message. It will be used to send Facilities-specific metrics to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        latency : int
+            Latency calculated by the Facilities.
+
+        Returns
+        -------
+        None
+        """
+        self.logging.debug("Monitoring latency metrics from the Facilities level")
+
+        self.prometheus.send_latency(latency)
+        self.prometheus.send_number_of_messages_recieved()
+
+    def application_level_callback(self, data: bytes) -> None:
+        """
+        Callback function for the Application level. This function will be called when the Application recieves or
+        sends a message. It will be used to send Application-specific metrics to the Prometheus Gateway.
+
+        Parameters
+        ----------
+        data : bytes
+            Data recieved by the Application.
+
+        Returns
+        -------
+        None
+        """
+        pass
 
     def __register_to_ldm(self, ldm: LDMFacility, location: Location) -> None:
         """
@@ -69,17 +165,22 @@ class MetricsExposer:
         -------
         None
         """
-        latency = time() - data_object["timeStamp"]
-        self.prometheus.send_latency(latency)
+        station_id = data_object["dataObject"]["header"]["stationId"]
+        if station_id in self.monitored_its_stations:
+            return
+        self.monitored_its_stations.append(station_id)
         self.prometheus.send_ldm_map(
-            data_object["header"]["stationId"],
-            data_object["cam"]["camParameters"]["basicContainer"]["stationType"],
+            data_object["dataObject"]["header"]["stationId"],
+            data_object["dataObject"]["cam"]["camParameters"]["basicContainer"]["stationType"],
             self.its_station_name,
-            data_object["cam"]["camParameters"]["basicContainer"]["referencePosition"]["latitude"] / 10000000,
-            data_object["cam"]["camParameters"]["basicContainer"]["referencePosition"]["longitude"] / 10000000,
+            data_object["dataObject"]["cam"]["camParameters"]["basicContainer"]["referencePosition"]["latitude"]
+            / 10000000,
+            data_object["dataObject"]["cam"]["camParameters"]["basicContainer"]["referencePosition"]["longitude"]
+            / 10000000,
         )
+
         self.logging.debug(
-            f"Sending CAM latency and LDM map data to Prometheus, with values latency: {latency}, LDM map, "
+            "Sending CAM latency and LDM map data to Prometheus, with LDM map, "
             + f"lat: {data_object['cam']['camParameters']['basicContainer']['referencePosition']['latitude'] / 10000000}, "
             + f"lon: {data_object['cam']['camParameters']['basicContainer']['referencePosition']['longitude'] / 10000000}"
         )
@@ -97,10 +198,12 @@ class MetricsExposer:
         -------
         None
         """
-        latency = time() - data_object["timeStamp"]
-        self.prometheus.send_latency(latency)
+        station_id = data_object["dataObject"]["header"]["stationId"]
+        if station_id in self.monitored_its_stations:
+            return
+        self.monitored_its_stations.append(station_id)
         self.prometheus.send_ldm_map(
-            data_object["dataObject"]["header"]["stationId"],
+            station_id,
             data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["stationType"],
             self.its_station_name,
             data_object["dataObject"]["vam"]["vamParameters"]["basicContainer"]["referencePosition"]["latitude"]
@@ -110,7 +213,7 @@ class MetricsExposer:
         )
 
         self.logging.debug(
-            f"Sending VAM latency and LDM map data to Prometheus, with values latency: {latency}, LDM map, "
+            "Sending VAM latency and LDM map data to Prometheus, with LDM map, "
             + f"lat: {data_object['dataObject']['vam']['vamParameters']['basicContainer']['referencePosition']['latitude'] / 10000000}, "
             + f"lon: {data_object['dataObject']['vam']['vamParameters']['basicContainer']['referencePosition']['longitude'] / 10000000}"
         )
@@ -128,6 +231,7 @@ class MetricsExposer:
         -------
         None
         """
+        self.monitored_its_stations = []
         if data_object["application_id"] == CAM:
             self.__handle_cam_data_object(data_object)
         elif data_object["application_id"] == VAM:
@@ -173,7 +277,7 @@ class MetricsExposer:
                 data_object_type=[CAM, VAM, DENM],
                 priority=None,
                 filter=None,
-                notify_time=0.5,
+                notify_time=1,
                 multiplicity=None,
                 order=None,
             ),

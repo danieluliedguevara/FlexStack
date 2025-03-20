@@ -1,7 +1,10 @@
 from __future__ import annotations
 from collections.abc import Callable
 from enum import Enum
+
 import math
+import sys
+
 from ..linklayer.exceptions import (
     SendingException,
     PacketTooLongException,
@@ -89,6 +92,7 @@ class Router:
         self.sign_service: SignService = sign_service
         self.indication_callback = None
         self.sequence_number = 0
+        self.metrics_callback = None
 
     def get_sequence_number(self) -> int:
         """
@@ -101,6 +105,17 @@ class Router:
         """
         self.sequence_number = (self.sequence_number + 1) % (2**16 - 1)
         return self.sequence_number
+
+    def add_metrics_callback(self, callback: Callable[[int, int], None]) -> None:
+        """
+        Add a callback for metrics.
+
+        Parameters
+        ----------
+        callback : Callable[[dict], None]
+            Callback to add.
+        """
+        self.metrics_callback = callback
 
     def register_indication_callback(
         self, callback: Callable[[GNDataIndication], None]
@@ -145,6 +160,8 @@ class Router:
         request : GNDataRequest
             GNDataRequest to handle.
         """
+        self.metrics_callback(0, sys.getsizeof(request.data))
+
         basic_header = BasicHeader()
         basic_header.initialize_with_mib(self.mib)
         basic_header.set_rhl(1)
@@ -311,7 +328,7 @@ class Router:
         packet: bytes,
     ) -> GNDataConfirm:
         """
-        Function called when a GBC packet has to be fowraded.
+        Function called when a GBC packet has to be forwarded.
 
         Parameters
         ----------
@@ -599,6 +616,8 @@ class Router:
         ------
         NotImplementedError : Version not implemented
         """
+        self.metrics_callback(sys.getsizeof(packet), 0)
+
         indication = GNDataIndication()
         # ETSI EN 302 636-4-1 V1.4.1 (2020-01). Section 10.3.3
         # Decap the common header
