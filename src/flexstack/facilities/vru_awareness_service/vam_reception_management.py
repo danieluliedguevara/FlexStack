@@ -91,6 +91,6 @@ class VAMReceptionManagement:
         None
         """
         generation_delta_time = GenerationDeltaTime()
-        current_its_time = generation_delta_time.as_timestamp_in_certain_point(time())
-        latency = current_its_time - vam["vam"]["generationDeltaTime"]
+        generation_delta_time.msec = vam["vam"]["generationDeltaTime"]
+        latency = time()*1000 - generation_delta_time.as_timestamp_in_certain_point(int(time()*1000))
         self.metrics_callback(latency)

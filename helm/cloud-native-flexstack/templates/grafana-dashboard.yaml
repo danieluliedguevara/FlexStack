@@ -578,7 +578,7 @@ data:
             "useBackend": false
           }
         ],
-        "title": "Facility Layer V2X Message Latency (s)",
+        "title": "Facility Layer V2X Message Latency (ms)",
         "type": "timeseries"
       },
       {
@@ -640,8 +640,7 @@ data:
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -737,8 +736,7 @@ data:
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -848,8 +846,7 @@ data:
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
@@ -945,8 +942,7 @@ data:
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "red",
