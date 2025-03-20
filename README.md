@@ -49,11 +49,12 @@ Library can be easily installed using the following command:
 pip install v2xflexstack-monitoring
 ```
 
-<!--# Technical description (very basic)
-Technical overview of the software, for example:
-If this is a library, code snippets showing how to use the library in another application.
-Software architecture overview 
-External dependencies-->
+# Technical description
+
+The FlexStack-Monitoring project has the following achitecture;
+
+![](https://raw.githubusercontent.com/danieluliedguevara/FlexStack/refs/heads/master/doc/img/Flexstack-Monitoring.png)
+
 
 ## Developers
 
