@@ -118,7 +118,7 @@ class PrometheusClientPull:
         None
         """
         self.v2x_uplink_bandwidth.observe(value)
-    
+
     def send_v2x_downlink_bandwidth(self, value: float) -> None:
         """
         Function to send the Downlink V2X bandwidth to the Prometheus Gateway.

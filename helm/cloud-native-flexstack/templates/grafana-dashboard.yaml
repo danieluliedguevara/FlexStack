@@ -51,7 +51,7 @@ data:
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "thresholds"
+              "mode": "palette-classic"
             },
             "custom": {
               "hideFrom": {
@@ -60,6 +60,7 @@ data:
                 "viz": false
               }
             },
+            "fieldMinMax": false,
             "mappings": [],
             "thresholds": {
               "mode": "absolute",
@@ -67,10 +68,6 @@ data:
                 {
                   "color": "green",
                   "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
                 }
               ]
             }
@@ -95,13 +92,13 @@ data:
             "showAttribution": true,
             "showDebug": false,
             "showMeasure": false,
-            "showScale": false,
+            "showScale": true,
             "showZoom": true
           },
           "layers": [
             {
               "config": {
-                "showLegend": true,
+                "showLegend": false,
                 "style": {
                   "color": {
                     "fixed": "dark-green"
@@ -114,6 +111,7 @@ data:
                     "mode": "mod"
                   },
                   "size": {
+                    "field": "station_id",
                     "fixed": 5,
                     "max": 15,
                     "min": 2
@@ -132,24 +130,28 @@ data:
                     "mode": "field"
                   },
                   "textConfig": {
-                    "fontSize": 12,
+                    "fontSize": 16,
                     "offsetX": 0,
-                    "offsetY": 0,
+                    "offsetY": -15,
                     "textAlign": "center",
                     "textBaseline": "middle"
                   }
                 }
               },
               "location": {
+                "geohash": "latitude",
+                "latitude": "Value",
+                "longitude": "Value",
+                "lookup": "latitude",
                 "mode": "auto"
               },
-              "name": "Layer 1",
-              "tooltip": true,
+              "name": "Station IDs",
+              "tooltip": false,
               "type": "markers"
             }
           ],
           "tooltip": {
-            "mode": "details"
+            "mode": "none"
           },
           "view": {
             "allLayers": true,
@@ -167,11 +169,14 @@ data:
               "uid": "prometheus"
             },
             "disableTextWrap": false,
-            "editorMode": "builder",
-            "expr": "ldm_map",
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "max(ldm_map) by (station_id, latitude, longitude)\r\n",
+            "format": "table",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
+            "interval": "",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A",
@@ -181,9 +186,33 @@ data:
         "title": "GPS Position of Stations",
         "transformations": [
           {
-            "id": "labelsToFields",
+            "disabled": true,
+            "id": "groupBy",
             "options": {
-              "mode": "columns"
+              "fields": {
+                "Value": {
+                  "aggregations": [
+                    "last"
+                  ],
+                  "operation": "aggregate"
+                },
+                "latitude": {
+                  "aggregations": [
+                    "lastNotNull"
+                  ],
+                  "operation": "aggregate"
+                },
+                "longitude": {
+                  "aggregations": [
+                    "lastNotNull"
+                  ],
+                  "operation": "aggregate"
+                },
+                "station_id": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                }
+              }
             }
           }
         ],

@@ -160,7 +160,8 @@ class Router:
         request : GNDataRequest
             GNDataRequest to handle.
         """
-        self.metrics_callback(0, sys.getsizeof(request.data))
+        if self.metrics_callback:
+            self.metrics_callback(0, sys.getsizeof(request.data))
 
         basic_header = BasicHeader()
         basic_header.initialize_with_mib(self.mib)
@@ -616,7 +617,8 @@ class Router:
         ------
         NotImplementedError : Version not implemented
         """
-        self.metrics_callback(sys.getsizeof(packet), 0)
+        if self.metrics_callback:
+            self.metrics_callback(sys.getsizeof(packet), 0)
 
         indication = GNDataIndication()
         # ETSI EN 302 636-4-1 V1.4.1 (2020-01). Section 10.3.3

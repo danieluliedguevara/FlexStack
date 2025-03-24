@@ -3,10 +3,11 @@ flexstack_deployment:
   repository: " docker.io/danieluliedi2cat/flexstack"
   tag: ":local"
   pullPolicy: Never
-  replicas: 4
+  replicas: 4 # Communication is only assured for two replicas.
   namespace: v2x
   restartPolicy: Never
   flexstack_prometheus_ip_and_port: "flexstack-prometheus-exporter.v2x.svc.cluster.local:8000"
+  multus_cni_conf: "bridge-conf"
 prometheus_service:
   prometheus_node_http_port: "32000"
   prometheus_node_reloder_web_port: "32001"

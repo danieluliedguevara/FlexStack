@@ -112,6 +112,7 @@ class RawLinkLayer(LinkLayer):
         while True:
             try:
                 m = self.sock.recv(1500)
+                print("[RawLinkLayer] Received broadcast packet. First 6 bytes: ", m[0:6])
                 try:
                     if m[0:6] == self.mac_address:
                         self.receive_callback(m[14:])
@@ -124,4 +125,5 @@ class RawLinkLayer(LinkLayer):
                 except NotImplementedError as e:
                     print("Error decoding packet: " + str(e))
             except OSError:
+                print(f"OS Error receiving packet on {self.sock.getsockname()}")
                 break

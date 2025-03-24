@@ -34,7 +34,7 @@ class LDMMaintenance:
         self.area_of_maintenance = area_of_maintenance
         self.new_data_recieved_flag = NO_NEW_DATA_RECIEVED
         self.metrics_callback = None
-    
+
     def run(self) -> None:
         """
         Method specified in the ETSI 302 895 V1.1.1 (2014-09). Section 5.3.2.
@@ -124,7 +124,7 @@ class LDMMaintenance:
         """
         try:
             self.data_containers.remove(data_object)
-        except (KeyError, json.decoder.JSONDecodeError) as e:
+        except (ValueError, KeyError, json.decoder.JSONDecodeError) as e:
             print(f"Error deleting data container: {str(e)}, data_containers {len(self.data_containers.all())}")
 
     def get_all_data_containers(self) -> list[dict]:
@@ -175,9 +175,12 @@ class LDMMaintenance:
         time_invalidity_data_containers = []
         try:
             for data_container in self.get_all_data_containers():
-                if (data_container["timeValidity"] + data_container["timeStamp"]) < TimestampIts(
-                    time.time()
-                ).convert_epoch_to_its_timestamp():
+                self.logging.debug(
+                    f"Time Validity: {data_container['timeValidity']}, Time Stamp: {data_container['timeStamp']} and Current Time: {TimestampIts().insert_unix_timestamp(time.time())}"
+                )
+                if (
+                    data_container["timeValidity"] + data_container["timeStamp"]
+                ) < TimestampIts().insert_unix_timestamp(time.time()):
                     self.del_provider_data(data_container)
                     time_invalidity_data_containers.append(data_container)
         except json.decoder.JSONDecodeError as e:

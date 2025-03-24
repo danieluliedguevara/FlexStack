@@ -1,4 +1,3 @@
-from time import time
 import logging
 
 from ..facilities.local_dynamic_map.ldm_facility import LDMFacility

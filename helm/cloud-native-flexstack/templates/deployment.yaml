@@ -16,7 +16,7 @@ spec:
       labels:
         app: flexstack
       annotations:
-        k8s.v1.cni.cncf.io/networks: veth-conf
+        k8s.v1.cni.cncf.io/networks: {{ .Values.flexstack_deployment.multus_cni_conf}}
     spec:
       containers:
         - name: flexstack
@@ -32,7 +32,9 @@ spec:
             - >
               ID=$(echo $POD_INDEX | grep -o '[0-9]*');
               MAC=$(printf '00:00:00:00:00:%02X' $ID);
-              exec python app.py --station-id $ID --mac-address $MAC --interface net1
+              LAT=$(printf '41.3%1X7304' $ID);
+              LONG=$(printf '2.1%1X2485' $ID);
+              exec python app.py --station-id $ID --mac-address $MAC --interface net1 --latitude $LAT --longitude $LONG
       restartPolicy: {{.Values.restartPolicy}}
 ---
 apiVersion: v1

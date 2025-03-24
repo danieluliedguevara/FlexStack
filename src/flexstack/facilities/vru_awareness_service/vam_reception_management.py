@@ -92,5 +92,9 @@ class VAMReceptionManagement:
         """
         generation_delta_time = GenerationDeltaTime()
         generation_delta_time.msec = vam["vam"]["generationDeltaTime"]
-        latency = time()*1000 - generation_delta_time.as_timestamp_in_certain_point(int(time()*1000))
+        current_time = time() * 1000
+        latency = current_time - generation_delta_time.as_timestamp_in_certain_point(int(current_time))
+        self.logging.debug(
+            f"Measured latency is: {latency} ms. Timestamp (from GenerationDeltaTime) from VAM: {generation_delta_time.as_timestamp_in_certain_point(int(time()*1000))} and current: {time()*1000}. From station: {vam['header']['stationId']}"
+        )
         self.metrics_callback(latency)
